@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToDO-Jquery</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  .custom-colorize-changer {
+    font-size: 15px;
+    color: #f0931a;
+    position: absolute;
+    right: 0;
+    top: 4;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="tailwind.config.js"></script>
+  <script defer src="script.js"></script>
+  <script>$( function() {
+    // the widget definition, where "custom" is the namespace,
+    // "colorize" the widget name
+    $.widget( "custom.colorize", {
+      // default options
+      options: {
+        red: 255,
+        green: 0,
+        blue: 0,
+ 
+        // Callbacks
+        change: null,
+        random: null
+      },
+ 
+      // The constructor
+      _create: function() {
+        this.element
+          // add a class for theming
+          .addClass( "custom-colorize" );
+ 
+        this.changer = $( "<button>", {
+          text: "Change color of your header",
+          "class": "custom-colorize-changer"
+        })
+        .appendTo( this.element )
+        .button();
+ 
+        // Bind click events on the changer button to the random method
+        this._on( this.changer, {
+          // _on won't call random when widget is disabled
+          click: "random"
+        });
+        this._refresh();
+      },
+ 
+      // Called when created, and later when changing options
+      _refresh: function() {
+        this.element.css( "background-color", "rgb(" +
+          this.options.red +"," +
+          this.options.green + "," +
+          this.options.blue + ")"
+        );
+ 
+        // Trigger a callback/event
+        this._trigger( "change" );
+      },
+ 
+      // A public method to change the color to a random value
+      // can be called directly via .colorize( "random" )
+      random: function( event ) {
+        var colors = {
+          red: Math.floor( Math.random() * 256 ),
+          green: Math.floor( Math.random() * 256 ),
+          blue: Math.floor( Math.random() * 256 )
+        };
+ 
+        // Trigger an event, check if it's canceled
+        if ( this._trigger( "random", event, colors ) !== false ) {
+          this.option( colors );
+        }
+      },
+ 
+      // Events bound via _on are removed automatically
+      // revert other modifications here
+      _destroy: function() {
+        // remove generated elements
+        this.changer.remove();
+ 
+        this.element
+          .removeClass( "custom-colorize" )
+          .enableSelection()
+          .css( "background-color", "transparent" );
+      },
+ 
+      // _setOptions is called with a hash of all options that are changing
+      // always refresh when changing options
+      _setOptions: function() {
+        // _super and _superApply handle keeping the right this-context
+        this._superApply( arguments );
+        this._refresh();
+      },
+ 
+      // _setOption is called for each individual option that is changing
+      _setOption: function( key, value ) {
+        // prevent invalid color values
+        if ( /red|green|blue/.test(key) && (value < 0 || value > 255) ) {
+          return;
+        }
+        this._super( key, value );
+      }
+    });
+ 
+    // Initialize with default options
+    $( "#my-widget" ).colorize();
+ } );
+</script>
+</head>
+
+<body class="bg-orange-light">
+  <header id="my-widget" class="text-center text-4xl py-8 shadow-md">
+    <h1 class="text-white">TODO board - drop and drag</h1>
+  </header>
+  
+  <div class="dialog" id="success" title="Edit todo">
+    <div id="tabs">
+      <ul>
+        <li><a href="#tabs-1">Description</a></li>
+        <li><a href="#tabs-2">Date picker</a></li>
+        <li><a href="#tabs-3">Comments</a></li>
+      </ul>
+
+      <div id="tabs-1">
+        <p>Change task here: <input type="text" placeholder="Title of task..." class="outline-black m-2"></p>
+        <p>Change color of task: <input type="color" id="colorpicker" class="outline-black m-2"></p>
+        <p>Describe: <textarea name="text" placeholder="Describe your task..." class="outline-black m-2" cols="33"
+            rows="5"></textarea></p>
+      </div>
+
+      <div id="tabs-2">
+        <p>Date: <input type="" id="datepicker" class="outline-black"></p>
+      </div>
+
+      <div id="tabs-3">
+        <p>Comments: <textarea id="textarea" name="text" placeholder="Comments for task..." class="outline-black" id=""
+            cols="33" rows="5"></textarea></p>
+      </div>
+
+    </div>
+    <button id="save-btn" value="Save">
+  </div>
+
+  <div class="outer-container grid grid-cols-3 gap-1">
+
+    <div class="grid-cols-1">
+      <div class="bg-orange-dark shadow-md h-10 w-64 ml-4 mr-4 mt-4 p-2 text-white ">TODO</div>
+      <section id="sortable-todo"
+        class="item-container ui-sortable bg-gray-300 shadow-md w-64 ml-4 mt-4 p-2 justify-between py-4">
+        
+        <div class="task-containter bg-white text-grey-dark p-4 mt-2 mb-2 shadow-md">
+          <p>Make tailwind css work</p>
+          <button class="btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+            </svg>
+          </button>
+        </div>
+       
+      </section>
+    </div>
+
+    <div class="grid-cols-1">
+      <div class="bg-orange-dark shadow-md h-10 w-64 ml-4 mr-4 mt-4 p-2 text-white ">DOING</div>
+      <section id="sortable-todo"
+        class="item-container ui-sortable bg-gray-300 shadow-md w-64 ml-4 mt-4 p-2 justify-between py-4">
+        <div class="task-containter bg-white text-grey-dark p-4 mt-2 mb-2 shadow-md">
+          <p>Making tailwind css work</p>
+          <button class="btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+            </svg>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid-cols-1">
+      <div class="bg-orange-dark shadow-md h-10 w-64 ml-4 mr-4 mt-4 p-2 text-white ">DONE</div>
+      <section id="sortable-todo"
+        class="item-container ui-sortable bg-gray-300 shadow-md w-64 ml-4 mt-4 p-2 justify-between py-4">
+        <div class="task-containter bg-white text-grey-dark p-4 mt-2 mb-2 shadow-md">
+          <p>Made tailwind css work</p>
+          <button class="btn">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+            </svg>
+          </button>
+        </div>
+      </section>
+    </div>
+<!-- <div>
+<div id="my-widget" class="text-white ml-4">Change my color</div>
+</div> -->
+</body>
+
+</html>

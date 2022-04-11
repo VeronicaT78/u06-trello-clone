@@ -1,0 +1,26 @@
+{
+  "name": "u06-trello-clone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "build-css": "tailwindcss build src/styles.css -o public/styles.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chas-academy/u06-trello-clone-VeronicaT78.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chas-academy/u06-trello-clone-VeronicaT78/issues"
+  },
+  "homepage": "https://github.com/chas-academy/u06-trello-clone-VeronicaT78#readme",
+  "dependencies": {
+    "tailwindcss": "^2.0.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.5"
+  }
+}
